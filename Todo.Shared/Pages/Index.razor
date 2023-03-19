@@ -1,0 +1,44 @@
+﻿@inject IDataService dataService
+@inject IGeoService geoService
+@page "/"
+
+<h3>Todos</h3>
+
+<span>My position is: @latitude, @longitude</span>
+
+<br />
+
+@foreach(var item in Data)
+{
+    <span>@item</span><br />
+}
+
+@code {
+    private List<string> Data { get; set; } = new List<string>();
+    private string? latitude { get; set; }
+    private string? longitude { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        var position = await geoService.GetPosition();
+
+        latitude = position.Latitude.ToString();
+        longitude = position.Longitude.ToString();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        var result = await dataService.GetData();
+
+        //var position = await geoService.GetPosition();
+
+        //latitude = position.Latitude.ToString();
+        //longitude = position.Longitude.ToString();
+
+        Data = result;
+    }
+}
